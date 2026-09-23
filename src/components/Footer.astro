@@ -1,0 +1,134 @@
+---
+import { CONTACT_EMAIL, CONTACT_DISPLAY, RUSTDESK_OFFICIAL_URL, UPSTREAM_SOURCE_URL } from '../data/config';
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-left">
+      <!-- Client version badge - only visible when real version is fetched from /dl/manifest.json -->
+      <span class="client-badge hidden" id="footer-client-badge" title="RustDesk Client Version">
+        <span data-i18n-es id="footer-version-es"></span>
+        <span data-i18n-en id="footer-version-en"></span>
+      </span>
+      <span class="separator hidden" id="footer-version-sep">·</span>
+
+      <a href="#checksums" class="footer-link">SHA-256</a>
+      <span class="separator">·</span>
+      <a
+        href={UPSTREAM_SOURCE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="footer-link"
+      >
+        <span data-i18n-es>Código fuente (AGPLv3)</span>
+        <span data-i18n-en>Source (AGPLv3)</span>
+      </a>
+      <span class="separator">·</span>
+      <a
+        href={RUSTDESK_OFFICIAL_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="footer-link"
+      >
+        rustdesk.com
+      </a>
+    </div>
+
+    <div class="footer-right">
+      <a href={`mailto:${CONTACT_EMAIL}`} class="footer-link contact-link" title="Contact / Contacto">
+        {CONTACT_DISPLAY}
+      </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    width: 100%;
+    margin-top: auto;
+    padding: 2.5rem 0 3rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .footer-left {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .client-badge {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .separator {
+    color: var(--border-strong);
+    user-select: none;
+  }
+
+  .footer-link {
+    color: var(--text-muted);
+    transition: color 0.15s ease;
+    text-underline-offset: 3px;
+  }
+
+  .footer-link:hover {
+    color: var(--text);
+    text-decoration: underline;
+  }
+
+  .contact-link {
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .contact-link:hover {
+    color: var(--accent);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  @media (max-width: 640px) {
+    .footer-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+  }
+</style>
+
+<script>
+  function updateFooterVersion(manifest: any) {
+    if (manifest?.version) {
+      const badge = document.getElementById('footer-client-badge');
+      const sep = document.getElementById('footer-version-sep');
+      const esEl = document.getElementById('footer-version-es');
+      const enEl = document.getElementById('footer-version-en');
+
+      if (esEl) esEl.textContent = `Cliente v${manifest.version}`;
+      if (enEl) enEl.textContent = `Client v${manifest.version}`;
+
+      badge?.classList.remove('hidden');
+      sep?.classList.remove('hidden');
+    }
+  }
+
+  document.addEventListener('manifest-loaded', ((e: CustomEvent) => {
+    if (e.detail?.manifest) {
+      updateFooterVersion(e.detail.manifest);
+    }
+  }) as EventListener);
+</script>

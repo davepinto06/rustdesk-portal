@@ -1,0 +1,112 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+    title?: string;
+    description?: string;
+}
+
+const {
+    title = "Escritorio Remoto RustDesk — davepinto.dev",
+    description = "Descarga el cliente de escritorio remoto RustDesk preconfigurado para conectarte al servidor personal con cero configuración.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" data-lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="alternate icon" href="/favicon.ico" />
+        <meta name="generator" content={Astro.generator} />
+
+        <title>{title}</title>
+        <meta name="description" content={description} />
+
+        <!-- Open Graph / Meta -->
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content="https://remote.davepinto.dev/" />
+        <meta
+            name="theme-color"
+            content="#fafafa"
+            media="(prefers-color-scheme: light)"
+        />
+        <meta
+            name="theme-color"
+            content="#09090b"
+            media="(prefers-color-scheme: dark)"
+        />
+
+        <!-- Inline script to set theme & language BEFORE paint to prevent FOUC / layout shift -->
+        <script is:inline>
+            (function () {
+                try {
+                    // 1. Language detection (ES default)
+                    var storedLang = localStorage.getItem("lang");
+                    if (storedLang === "en" || storedLang === "es") {
+                        document.documentElement.setAttribute(
+                            "data-lang",
+                            storedLang,
+                        );
+                        document.documentElement.lang = storedLang;
+                    } else {
+                        document.documentElement.setAttribute(
+                            "data-lang",
+                            "es",
+                        );
+                        document.documentElement.lang = "es";
+                    }
+
+                    // 2. Theme detection
+                    var storedTheme = localStorage.getItem("theme");
+                    if (storedTheme === "dark" || storedTheme === "light") {
+                        document.documentElement.setAttribute(
+                            "data-theme",
+                            storedTheme,
+                        );
+                    } else if (
+                        window.matchMedia &&
+                        window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches
+                    ) {
+                        document.documentElement.setAttribute(
+                            "data-theme",
+                            "dark",
+                        );
+                    } else {
+                        document.documentElement.setAttribute(
+                            "data-theme",
+                            "light",
+                        );
+                    }
+                } catch (e) {
+                    document.documentElement.setAttribute("data-lang", "es");
+                    document.documentElement.setAttribute(
+                        "data-theme",
+                        "light",
+                    );
+                }
+            })();
+        </script>
+    </head>
+    <body>
+        <Header />
+        <main class="site-main">
+            <slot />
+        </main>
+        <Footer />
+    </body>
+</html>
+
+<style>
+    .site-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+</style>

@@ -1,0 +1,126 @@
+name: Mirror macOS Upstream DMGs to R2
+
+on:
+  schedule:
+    # Run once daily at 06:00 UTC to check for upstream RustDesk releases
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    # Allow manual execution from GitHub Actions UI
+
+permissions:
+  contents: read
+
+jobs:
+  mirror-macos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies & AWS CLI
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq curl
+
+      - name: Fetch latest RustDesk release metadata
+        id: upstream
+        run: |
+          echo "Fetching latest release from rustdesk/rustdesk..."
+          RELEASE_JSON=$(curl -sSL -H "Accept: application/vnd.github+json" https://api.github.com/repos/rustdesk/rustdesk/releases/latest)
+          TAG_NAME=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
+          VERSION="${TAG_NAME#v}"
+
+          echo "Latest upstream version: $VERSION ($TAG_NAME)"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+
+          # Find DMG assets
+          ARM_DMG_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | test(".*(aarch64|arm64).*\\.dmg$")) | .browser_download_url' | head -n 1)
+          INTEL_DMG_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | test(".*(x86_64).*\\.dmg$")) | .browser_download_url' | head -n 1)
+
+          if [ -z "$ARM_DMG_URL" ] || [ -z "$INTEL_DMG_URL" ]; then
+            echo "Error: Could not locate both ARM and Intel DMG assets in release $TAG_NAME"
+            exit 1
+          fi
+
+          echo "arm_url=$ARM_DMG_URL" >> $GITHUB_OUTPUT
+          echo "intel_url=$INTEL_DMG_URL" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS CLI for Cloudflare R2
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          aws configure set aws_access_key_id "$R2_ACCESS_KEY_ID"
+          aws configure set aws_secret_access_key "$R2_SECRET_ACCESS_KEY"
+          aws configure set region auto
+
+      - name: Download, Verify, and Mirror to R2
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME || 'rustdesk-dl' }}
+          ENDPOINT_URL: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          VERSION: ${{ steps.upstream.outputs.version }}
+          ARM_URL: ${{ steps.upstream.outputs.arm_url }}
+          INTEL_URL: ${{ steps.upstream.outputs.intel_url }}
+        run: |
+          mkdir -p artifacts
+          cd artifacts
+
+          echo "Downloading ARM DMG..."
+          curl -sSL -o RustDesk-mac-arm64.dmg "$ARM_URL"
+          ARM_SIZE=$(stat -c%s RustDesk-mac-arm64.dmg)
+          ARM_SHA=$(sha256sum RustDesk-mac-arm64.dmg | awk '{print $1}')
+
+          echo "Downloading Intel DMG..."
+          curl -sSL -o RustDesk-mac-intel.dmg "$INTEL_URL"
+          INTEL_SIZE=$(stat -c%s RustDesk-mac-intel.dmg)
+          INTEL_SHA=$(sha256sum RustDesk-mac-intel.dmg | awk '{print $1}')
+
+          echo "Uploading stable-named DMGs to R2..."
+          aws s3 cp RustDesk-mac-arm64.dmg "s3://$R2_BUCKET_NAME/RustDesk-mac-arm64.dmg" --endpoint-url "$ENDPOINT_URL"
+          aws s3 cp RustDesk-mac-intel.dmg "s3://$R2_BUCKET_NAME/RustDesk-mac-intel.dmg" --endpoint-url "$ENDPOINT_URL"
+
+          echo "Fetching existing manifest.json from R2 if present..."
+          if aws s3 cp "s3://$R2_BUCKET_NAME/manifest.json" manifest.json --endpoint-url "$ENDPOINT_URL"; then
+            echo "Existing manifest retrieved."
+          else
+            echo "No existing manifest in R2, creating baseline."
+            echo '{"version":"'"$VERSION"'","released":"'$(date +%Y-%m-%d)'","windows":{},"mac_arm64":{},"mac_intel":{}}' > manifest.json
+          fi
+
+          # Update only the mac_arm64 and mac_intel sections and release version
+          TODAY=$(date +%Y-%m-%d)
+          jq \
+            --arg ver "$VERSION" \
+            --arg date "$TODAY" \
+            --arg arm_sha "$ARM_SHA" \
+            --argjson arm_size "$ARM_SIZE" \
+            --arg intel_sha "$INTEL_SHA" \
+            --argjson intel_size "$INTEL_SIZE" \
+            '
+            .version = $ver |
+            .released = $date |
+            .mac_arm64 = {
+              "url": "https://dl.davepinto.dev/RustDesk-mac-arm64.dmg",
+              "size": $arm_size,
+              "sha256": $arm_sha
+            } |
+            .mac_intel = {
+              "url": "https://dl.davepinto.dev/RustDesk-mac-intel.dmg",
+              "size": $intel_size,
+              "sha256": $intel_sha
+            }
+            ' manifest.json > manifest.tmp && mv manifest.tmp manifest.json
+
+          echo "Updated manifest content:"
+          cat manifest.json
+
+          echo "Uploading updated manifest.json to R2..."
+          aws s3 cp manifest.json "s3://$R2_BUCKET_NAME/manifest.json" \
+            --endpoint-url "$ENDPOINT_URL" \
+            --content-type "application/json" \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+          echo "macOS sync completed successfully."

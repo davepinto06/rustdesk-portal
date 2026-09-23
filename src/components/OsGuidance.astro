@@ -1,0 +1,777 @@
+---
+import { RUSTDESK_CONFIG_STRING } from '../data/config';
+---
+
+<section class="guidance-section" id="guidance">
+  <div class="container">
+    <!-- OS Tab Navigation -->
+    <div class="tab-header">
+      <h2 class="section-title">
+        <span data-i18n-es>¿Qué hacer después de descargar?</span>
+        <span data-i18n-en>What happens next</span>
+      </h2>
+      <div class="tab-list" role="tablist" aria-label="Installation guidance per platform">
+        <button
+          type="button"
+          class="tab-btn active"
+          id="tab-windows-btn"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-windows"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.949-1.801"/>
+          </svg>
+          Windows
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          id="tab-mac-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-mac"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 1.01-2.87-.9.04-2.02.6-2.67 1.34-.56.65-1.07 1.71-.97 2.76 1.02.08 2.02-.48 2.63-1.23z"/>
+          </svg>
+          macOS
+        </button>
+      </div>
+    </div>
+
+    <!-- Windows Guidance Panel -->
+    <div id="panel-windows" class="guidance-panel active" role="tabpanel" aria-labelledby="tab-windows-btn">
+      <div class="guidance-grid">
+        <div class="guidance-steps">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3 class="step-title">
+                <span data-i18n-es>Abre el instalador descargado</span>
+                <span data-i18n-en>Run the downloaded installer</span>
+              </h3>
+              <p class="step-desc">
+                <span data-i18n-es>Ejecuta <code>RustDesk-win64.exe</code> desde tu carpeta de descargas.</span>
+                <span data-i18n-en>Open <code>RustDesk-win64.exe</code> from your downloads folder.</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="step-card highlight-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3 class="step-title">
+                <span data-i18n-es>SmartScreen: Haz clic en "Más información" → "Ejecutar de todas formas"</span>
+                <span data-i18n-en>SmartScreen: Click "More info" → "Run anyway"</span>
+              </h3>
+              <p class="step-desc">
+                <span data-i18n-es>
+                  Al estar preparado directamente para el servidor personal sin un certificado comercial de pago, Windows mostrará un aviso azul: <em>"Windows protegió su PC"</em>.
+                </span>
+                <span data-i18n-en>
+                  Because this client is compiled directly for the personal server and not signed with a commercial certificate, Windows will display: <em>"Windows protected your PC"</em>.
+                </span>
+              </p>
+              <div class="callout">
+                <span class="callout-icon">ℹ</span>
+                <span data-i18n-es>Haz clic en <strong>Más información</strong> y luego en <strong>Ejecutar de todas formas</strong> para continuar.</span>
+                <span data-i18n-en>Click <strong>More info</strong>, then click <strong>Run anyway</strong> to continue.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3 class="step-title">
+                <span data-i18n-es>Listo sin configuración manual</span>
+                <span data-i18n-en>Zero setup required</span>
+              </h3>
+              <p class="step-desc">
+                <span data-i18n-es>
+                  La dirección del servidor personal y la clave de cifrado ya vienen integradas en la aplicación. Tu ID y contraseña temporal aparecerán de inmediato. Comparte tu ID para comenzar la sesión de soporte.
+                </span>
+                <span data-i18n-en>
+                  The personal server address and encryption key are already baked in. Your ID and one-time password will appear immediately. Share your ID to start the support session.
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Windows Screenshot Placeholder -->
+        <div class="guidance-media">
+          <div class="media-placeholder">
+            <div class="placeholder-tag">
+              <span data-i18n-es>Paso en SmartScreen</span>
+              <span data-i18n-en>SmartScreen Walkthrough</span>
+            </div>
+            <div class="smartscreen-mockup">
+              <div class="mockup-header">
+                <div class="mockup-badge">
+                  <span data-i18n-es>Windows protegió su PC</span>
+                  <span data-i18n-en>Windows protected your PC</span>
+                </div>
+              </div>
+              <div class="mockup-body">
+                <p data-i18n-es>Microsoft Defender SmartScreen evitó que se iniciara una aplicación no reconocida.</p>
+                <p data-i18n-en>Microsoft Defender SmartScreen prevented an unrecognized app from starting.</p>
+                <div class="mockup-action-line">
+                  <span class="mockup-link-highlight">
+                    <span data-i18n-es>Más información ↗</span>
+                    <span data-i18n-en>More info ↗</span>
+                  </span>
+                </div>
+                <div class="mockup-expanded">
+                  <div class="mockup-meta">
+                    <span data-i18n-es>Aplicación: <strong>RustDesk-win64.exe</strong></span>
+                    <span data-i18n-en>App: <strong>RustDesk-win64.exe</strong></span>
+                  </div>
+                  <div class="mockup-meta">
+                    <span data-i18n-es>Editor: <strong>Editor desconocido</strong></span>
+                    <span data-i18n-en>Publisher: <strong>Unknown publisher</strong></span>
+                  </div>
+                  <div class="mockup-btn-highlight">
+                    <span data-i18n-es>Ejecutar de todas formas</span>
+                    <span data-i18n-en>Run anyway</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="placeholder-caption">
+              <span data-i18n-es>Haz clic en "Más información" para que aparezca el botón "Ejecutar de todas formas"</span>
+              <span data-i18n-en>Click "More info" to reveal the "Run anyway" button</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- macOS Guidance Panel -->
+    <div id="panel-mac" class="guidance-panel" role="tabpanel" aria-labelledby="tab-mac-btn">
+      <div class="guidance-grid">
+        <div class="guidance-steps">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3 class="step-title">
+                <span data-i18n-es>Instala la aplicación oficial</span>
+                <span data-i18n-en>Install the official app</span>
+              </h3>
+              <p class="step-desc">
+                <span data-i18n-es>Abre el archivo <code>.dmg</code> descargado y arrastra el ícono de <strong>RustDesk</strong> a tu carpeta de <strong>Aplicaciones</strong>.</span>
+                <span data-i18n-en>Open the downloaded <code>.dmg</code> file and drag the <strong>RustDesk</strong> icon into your <strong>Applications</strong> folder.</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3 class="step-title">
+                <span data-i18n-es>Concede los permisos de macOS</span>
+                <span data-i18n-en>Grant macOS screen permissions</span>
+              </h3>
+              <p class="step-desc">
+                <span data-i18n-es>Cuando el sistema lo solicite, ve a <em>Ajustes del Sistema → Privacidad y seguridad</em> y activa los permisos de <strong>Accesibilidad</strong> y <strong>Grabación de pantalla</strong> para permitir la sesión de soporte remoto.</span>
+                <span data-i18n-en>When prompted, open <em>System Settings → Privacy & Security</em> and enable permissions for <strong>Accessibility</strong> and <strong>Screen Recording</strong> to allow the remote support session.</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="step-card highlight-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3 class="step-title">
+                <span data-i18n-es>Aplica la configuración de conexión</span>
+                <span data-i18n-en>Apply the connection config</span>
+              </h3>
+              <p class="step-desc">
+                <span data-i18n-es>Copia esta cadena de configuración y pégala en RustDesk en <em>Ajustes → Red → Desbloquear ajustes de red → Cadena de configuración</em>:</span>
+                <span data-i18n-en>Copy this configuration string and paste it into RustDesk under <em>Settings → Network → Unlock Network Settings → Configuration String</em>:</span>
+              </p>
+
+              <!-- Config String Block (Horizontal scrolling with no layout resizing) -->
+              <div class="code-block-container">
+                <div class="code-header">
+                  <span class="code-title">
+                    <span data-i18n-es>Cadena de configuración</span>
+                    <span data-i18n-en>Configuration String</span>
+                  </span>
+                  <button type="button" class="copy-btn" id="copy-config-btn" data-copy={RUSTDESK_CONFIG_STRING}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                    </svg>
+                    <span class="copy-text" data-i18n-es>Copiar cadena</span>
+                    <span class="copy-text" data-i18n-en>Copy string</span>
+                  </button>
+                </div>
+                <pre class="code-content"><code>{RUSTDESK_CONFIG_STRING}</code></pre>
+              </div>
+
+              <!-- Terminal One-liner -->
+              <div class="terminal-note">
+                <p class="step-desc-subtle">
+                  <span data-i18n-es>O ejecuta este comando en la Terminal:</span>
+                  <span data-i18n-en>Or run this one-liner in Terminal:</span>
+                </p>
+                <div class="code-block-container">
+                  <div class="code-header">
+                    <span class="code-title">Terminal</span>
+                    <button
+                      type="button"
+                      class="copy-btn"
+                      id="copy-terminal-btn"
+                      data-copy={`/Applications/RustDesk.app/Contents/MacOS/RustDesk --config '${RUSTDESK_CONFIG_STRING}'`}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                      </svg>
+                      <span class="copy-text" data-i18n-es>Copiar comando</span>
+                      <span class="copy-text" data-i18n-en>Copy command</span>
+                    </button>
+                  </div>
+                  <pre class="code-content"><code>/Applications/RustDesk.app/Contents/MacOS/RustDesk --config '{RUSTDESK_CONFIG_STRING}'</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- macOS Graphic Placeholder -->
+        <div class="guidance-media">
+          <div class="media-placeholder">
+            <div class="placeholder-tag">
+              <span data-i18n-es>Permisos de macOS</span>
+              <span data-i18n-en>macOS Permissions</span>
+            </div>
+            <div class="mac-mockup">
+              <div class="mockup-header">
+                <div class="mac-traffic-lights">
+                  <span class="tl tl-red"></span>
+                  <span class="tl tl-yellow"></span>
+                  <span class="tl tl-green"></span>
+                </div>
+                <div class="mac-title">
+                  <span data-i18n-es>Privacidad y seguridad</span>
+                  <span data-i18n-en>Privacy & Security</span>
+                </div>
+              </div>
+              <div class="mockup-body">
+                <div class="perm-row">
+                  <span data-i18n-es>Accesibilidad</span>
+                  <span data-i18n-en>Accessibility</span>
+                  <span class="perm-toggle checked">
+                    <span data-i18n-es>✓ Permitido</span>
+                    <span data-i18n-en>✓ Allowed</span>
+                  </span>
+                </div>
+                <div class="perm-row">
+                  <span data-i18n-es>Grabación de pantalla</span>
+                  <span data-i18n-en>Screen Recording</span>
+                  <span class="perm-toggle checked">
+                    <span data-i18n-es>✓ Permitido</span>
+                    <span data-i18n-en>✓ Allowed</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <span class="placeholder-caption">
+              <span data-i18n-es>Requerido por macOS para compartir pantalla, teclado y mouse</span>
+              <span data-i18n-en>Required by macOS for remote mouse, keyboard, and screen sharing</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .guidance-section {
+    padding: 3.5rem 0 4rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .tab-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--text);
+  }
+
+  .tab-list {
+    display: inline-flex;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-radius: 6px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .tab-btn:hover {
+    color: var(--text);
+  }
+
+  .tab-btn.active {
+    background-color: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .guidance-panel {
+    display: none;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .guidance-panel.active {
+    display: block;
+  }
+
+  /* Critical fix: minmax(0, 1fr) prevents the left column from expanding when code blocks contain long unbroken strings */
+  .guidance-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 2.5rem;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .guidance-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .step-card {
+    display: flex;
+    gap: 1.25rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .highlight-card {
+    border-color: var(--border-strong);
+  }
+
+  .step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .step-content {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .step-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.375rem;
+  }
+
+  .step-desc {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  .step-desc code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    background-color: var(--code-bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .step-desc-subtle {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    margin-bottom: 0.375rem;
+  }
+
+  .callout {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 6px;
+    background-color: var(--badge-bg);
+    border: 1px solid var(--badge-border);
+    color: var(--badge-text);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .callout-icon {
+    font-weight: 700;
+  }
+
+  .terminal-note {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* Code block container with strictly bounded width and horizontal scrolling */
+  .code-block-container {
+    margin-top: 0.625rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--code-bg);
+    overflow: hidden;
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background-color: var(--surface);
+  }
+
+  .code-title {
+    font-weight: 500;
+  }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    transition: background-color 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .copy-btn:hover {
+    color: var(--text);
+    background-color: var(--surface-hover);
+  }
+
+  .copy-btn.copied {
+    color: #16a34a;
+    border-color: #86efac;
+  }
+
+  /* Pre block with clean horizontal scroll and custom scrollbar */
+  .code-content {
+    padding: 0.75rem 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    color: var(--text);
+    line-height: 1.5;
+    white-space: pre;
+    word-break: normal;
+    overflow-wrap: normal;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .code-content code {
+    font-family: inherit;
+    font-size: inherit;
+    white-space: pre;
+    word-break: normal;
+    overflow-wrap: normal;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .code-content::-webkit-scrollbar {
+    height: 6px;
+  }
+  .code-content::-webkit-scrollbar-track {
+    background: var(--code-bg);
+  }
+  .code-content::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: 3px;
+  }
+  .code-content::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-muted);
+  }
+
+  /* Media / Placeholder */
+  .guidance-media {
+    position: sticky;
+    top: 2rem;
+    min-width: 0;
+  }
+
+  .media-placeholder {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background-color: var(--surface);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+  }
+
+  .placeholder-tag {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .smartscreen-mockup, .mac-mockup {
+    width: 100%;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.875rem;
+    text-align: left;
+    font-size: 0.8125rem;
+  }
+
+  .smartscreen-mockup {
+    border-top: 4px solid #2563eb;
+  }
+
+  .mockup-header {
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .mockup-badge {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .mockup-body {
+    padding: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .mockup-action-line {
+    margin: 0.75rem 0;
+  }
+
+  .mockup-link-highlight {
+    color: var(--accent);
+    text-decoration: underline;
+    font-weight: 600;
+    cursor: default;
+  }
+
+  .mockup-expanded {
+    border-top: 1px dashed var(--border);
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .mockup-meta {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .mockup-btn-highlight {
+    display: inline-block;
+    background-color: var(--surface);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.625rem;
+    font-weight: 600;
+  }
+
+  .mac-traffic-lights {
+    display: flex;
+    gap: 4px;
+  }
+
+  .tl {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .tl-red { background: #ef4444; }
+  .tl-yellow { background: #eab308; }
+  .tl-green { background: #22c55e; }
+
+  .mac-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .perm-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .perm-toggle.checked {
+    color: #16a34a;
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+
+  .placeholder-caption {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 768px) {
+    .guidance-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .guidance-media {
+      position: static;
+      margin-top: 1rem;
+    }
+  }
+</style>
+
+<script>
+  function initGuidance() {
+    const tabWindowsBtn = document.getElementById('tab-windows-btn');
+    const tabMacBtn = document.getElementById('tab-mac-btn');
+    const panelWindows = document.getElementById('panel-windows');
+    const panelMac = document.getElementById('panel-mac');
+
+    function selectTab(os: 'windows' | 'mac') {
+      if (os === 'windows') {
+        tabWindowsBtn?.classList.add('active');
+        tabWindowsBtn?.setAttribute('aria-selected', 'true');
+        tabMacBtn?.classList.remove('active');
+        tabMacBtn?.setAttribute('aria-selected', 'false');
+
+        panelWindows?.classList.add('active');
+        panelMac?.classList.remove('active');
+      } else {
+        tabMacBtn?.classList.add('active');
+        tabMacBtn?.setAttribute('aria-selected', 'true');
+        tabWindowsBtn?.classList.remove('active');
+        tabWindowsBtn?.setAttribute('aria-selected', 'false');
+
+        panelMac?.classList.add('active');
+        panelWindows?.classList.remove('active');
+      }
+    }
+
+    tabWindowsBtn?.addEventListener('click', () => selectTab('windows'));
+    tabMacBtn?.addEventListener('click', () => selectTab('mac'));
+
+    document.addEventListener('os-change', ((e: CustomEvent) => {
+      const os = e.detail?.os;
+      if (os === 'windows') {
+        selectTab('windows');
+      } else if (os === 'mac_arm64' || os === 'mac_intel') {
+        selectTab('mac');
+      }
+    }) as EventListener);
+
+    // Setup Copy Buttons with localized feedback
+    document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const textToCopy = btn.getAttribute('data-copy');
+        if (!textToCopy) return;
+
+        const isEs = (document.documentElement.getAttribute('data-lang') || 'es') === 'es';
+        const copiedLabel = isEs ? '¡Copiado!' : 'Copied!';
+
+        try {
+          await navigator.clipboard.writeText(textToCopy);
+          const originalHTML = btn.innerHTML;
+          btn.classList.add('copied');
+          btn.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>${copiedLabel}</span>
+          `;
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('copied');
+          }, 2000);
+        } catch (err) {
+          prompt('Copy to clipboard: Ctrl+C, Enter', textToCopy);
+        }
+      });
+    });
+  }
+
+  initGuidance();
+</script>

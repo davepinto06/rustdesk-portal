@@ -1,0 +1,103 @@
+---
+// LanguageToggle.astro
+---
+
+<div class="lang-switcher" role="group" aria-label="Language selection / Selección de idioma">
+  <button
+    type="button"
+    class="lang-btn active"
+    id="lang-btn-es"
+    data-lang="es"
+    aria-label="Español"
+    title="Español (predeterminado)"
+  >
+    ES
+  </button>
+  <span class="lang-divider">/</span>
+  <button
+    type="button"
+    class="lang-btn"
+    id="lang-btn-en"
+    data-lang="en"
+    aria-label="English"
+    title="English"
+  >
+    EN
+  </button>
+</div>
+
+<style>
+  .lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: transparent;
+  }
+
+  .lang-divider {
+    color: var(--border-strong);
+    user-select: none;
+    font-size: 0.75rem;
+  }
+
+  .lang-btn {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.125rem 0.25rem;
+    border-radius: 4px;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .lang-btn:hover {
+    color: var(--text);
+  }
+
+  .lang-btn.active {
+    color: var(--accent);
+    background-color: var(--badge-bg);
+  }
+</style>
+
+<script>
+  function updateLangUI() {
+    const current = document.documentElement.getAttribute('data-lang') || 'es';
+    const esBtn = document.getElementById('lang-btn-es');
+    const enBtn = document.getElementById('lang-btn-en');
+
+    if (current === 'es') {
+      esBtn?.classList.add('active');
+      enBtn?.classList.remove('active');
+      document.documentElement.lang = 'es';
+    } else {
+      enBtn?.classList.add('active');
+      esBtn?.classList.remove('active');
+      document.documentElement.lang = 'en';
+    }
+  }
+
+  function setLanguage(lang: 'es' | 'en') {
+    document.documentElement.setAttribute('data-lang', lang);
+    try {
+      localStorage.setItem('lang', lang);
+    } catch (e) {
+      // storage unavailable
+    }
+    updateLangUI();
+    document.dispatchEvent(new CustomEvent('lang-change', { detail: { lang } }));
+  }
+
+  function initLangToggle() {
+    updateLangUI();
+
+    document.getElementById('lang-btn-es')?.addEventListener('click', () => setLanguage('es'));
+    document.getElementById('lang-btn-en')?.addEventListener('click', () => setLanguage('en'));
+  }
+
+  initLangToggle();
+</script>

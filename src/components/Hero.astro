@@ -1,0 +1,362 @@
+---
+const defaultWindowsUrl = "/dl/RustDesk-win64.exe";
+const defaultMacArmUrl = "/dl/RustDesk-mac-arm64.dmg";
+const defaultMacIntelUrl = "/dl/RustDesk-mac-intel.dmg";
+---
+
+<section class="hero-section">
+  <div class="container hero-container">
+    <div class="hero-badge">
+      <span class="pulse-dot"></span>
+      <span data-i18n-es>davepinto.dev · Escritorio Remoto</span>
+      <span data-i18n-en>davepinto.dev · Remote Desktop</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span data-i18n-es>Soporte remoto rápido y seguro.</span>
+      <span data-i18n-en>Fast, secure remote support.</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      <span data-i18n-es>
+        Descarga el cliente de RustDesk para conectarte directamente al servidor personal sin necesidad de configuraciones complicadas.
+      </span>
+      <span data-i18n-en>
+        Download the RustDesk client to connect directly to the personal server with zero manual setup.
+      </span>
+    </p>
+
+    <!-- Primary Download Area -->
+    <div class="download-action">
+      <a
+        id="primary-download-btn"
+        href={defaultWindowsUrl}
+        class="btn-primary hero-btn"
+        download
+      >
+        <svg
+          class="download-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span id="primary-btn-label">Descargar para Windows</span>
+        <span id="primary-btn-size" class="btn-meta"></span>
+      </a>
+
+      <div class="os-detected-note" id="os-detected-label">
+        Detectado para tu sistema
+      </div>
+    </div>
+
+    <!-- "Not your system?" selector row -->
+    <div class="other-platforms">
+      <span class="other-label" data-i18n-es>¿Otro sistema operativo?</span>
+      <span class="other-label" data-i18n-en>Not your system?</span>
+      <div class="platform-chips" role="tablist" aria-label="Available operating systems">
+        <button
+          type="button"
+          class="chip-btn active"
+          data-target-os="windows"
+          data-url={defaultWindowsUrl}
+        >
+          Windows
+        </button>
+        <span class="chip-divider">·</span>
+        <button
+          type="button"
+          class="chip-btn"
+          data-target-os="mac_arm64"
+          data-url={defaultMacArmUrl}
+        >
+          macOS (Apple Silicon)
+        </button>
+        <span class="chip-divider">·</span>
+        <button
+          type="button"
+          class="chip-btn"
+          data-target-os="mac_intel"
+          data-url={defaultMacIntelUrl}
+        >
+          macOS (Intel)
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    padding: 4.5rem 0 3rem;
+    text-align: center;
+  }
+
+  .hero-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3125rem 0.75rem;
+    border-radius: 9999px;
+    background-color: var(--badge-bg);
+    color: var(--badge-text);
+    border: 1px solid var(--badge-border);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    display: inline-block;
+  }
+
+  .hero-title {
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+    color: var(--text);
+    max-width: 680px;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 620px;
+    margin-bottom: 2.5rem;
+  }
+
+  .download-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2.25rem;
+  }
+
+  .hero-btn {
+    padding: 0.875rem 2rem;
+    font-size: 1.0625rem;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .btn-meta {
+    opacity: 0.85;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    margin-left: 0.25rem;
+  }
+
+  .download-icon {
+    flex-shrink: 0;
+  }
+
+  .os-detected-note {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .other-platforms {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    padding-top: 0.5rem;
+  }
+
+  .other-label {
+    margin-right: 0.25rem;
+  }
+
+  .platform-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .chip-divider {
+    color: var(--border-strong);
+    user-select: none;
+  }
+
+  .chip-btn {
+    color: var(--text-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .chip-btn:hover {
+    color: var(--text);
+    background-color: var(--surface-hover);
+  }
+
+  .chip-btn.active {
+    color: var(--accent);
+    font-weight: 600;
+    background-color: var(--badge-bg);
+  }
+</style>
+
+<script>
+  interface ManifestItem {
+    url?: string;
+    size?: number;
+    sha256?: string;
+  }
+
+  interface Manifest {
+    version?: string;
+    released?: string;
+    windows?: ManifestItem;
+    mac_arm64?: ManifestItem;
+    mac_intel?: ManifestItem;
+  }
+
+  let activeManifest: Manifest | null = null;
+  let currentOs: 'windows' | 'mac_arm64' | 'mac_intel' = 'windows';
+
+  const DEFAULT_URLS = {
+    windows: '/dl/RustDesk-win64.exe',
+    mac_arm64: '/dl/RustDesk-mac-arm64.dmg',
+    mac_intel: '/dl/RustDesk-mac-intel.dmg'
+  };
+
+  function getLang(): 'es' | 'en' {
+    return (document.documentElement.getAttribute('data-lang') as 'es' | 'en') || 'es';
+  }
+
+  function detectOS(): 'windows' | 'mac_arm64' | 'mac_intel' {
+    const uad = (navigator as any).userAgentData;
+    if (uad && uad.platform) {
+      const platform = uad.platform.toLowerCase();
+      if (platform.includes('win')) return 'windows';
+      if (platform.includes('mac')) return 'mac_arm64';
+    }
+
+    const ua = (navigator.userAgent || '').toLowerCase();
+    const plat = (navigator.platform || '').toLowerCase();
+
+    if (plat.includes('win') || ua.includes('windows')) {
+      return 'windows';
+    }
+    if (plat.includes('mac') || ua.includes('macintosh') || ua.includes('mac os')) {
+      return 'mac_arm64';
+    }
+
+    return 'windows';
+  }
+
+  function updateDownloadUI(os: 'windows' | 'mac_arm64' | 'mac_intel') {
+    currentOs = os;
+    const isEs = getLang() === 'es';
+    const btn = document.getElementById('primary-download-btn') as HTMLAnchorElement | null;
+    const labelEl = document.getElementById('primary-btn-label');
+    const sizeEl = document.getElementById('primary-btn-size');
+    const detectedNote = document.getElementById('os-detected-label');
+    const chipBtns = document.querySelectorAll<HTMLButtonElement>('.chip-btn');
+
+    let manifestData = activeManifest?.[os];
+    let osDisplayName = 'Windows';
+    let fileUrl = manifestData?.url || DEFAULT_URLS[os];
+
+    if (os === 'mac_arm64') {
+      osDisplayName = 'macOS (Apple Silicon)';
+    } else if (os === 'mac_intel') {
+      osDisplayName = 'macOS (Intel)';
+    }
+
+    if (btn) {
+      btn.href = fileUrl;
+    }
+    if (labelEl) {
+      labelEl.textContent = isEs ? `Descargar para ${osDisplayName}` : `Download for ${osDisplayName}`;
+    }
+    if (sizeEl) {
+      if (manifestData?.size && typeof manifestData.size === 'number') {
+        sizeEl.textContent = `(${(manifestData.size / 1000000).toFixed(0)} MB)`;
+      } else {
+        sizeEl.textContent = '';
+      }
+    }
+    if (detectedNote) {
+      detectedNote.textContent = isEs ? `Detectado: ${osDisplayName}` : `Targeting: ${osDisplayName}`;
+    }
+
+    chipBtns.forEach(chip => {
+      if (chip.getAttribute('data-target-os') === os) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
+
+    document.dispatchEvent(new CustomEvent('os-change', { detail: { os } }));
+  }
+
+  async function loadManifest() {
+    try {
+      // Fetch /dl/manifest.json (same-origin, proxied by Caddy to R2)
+      const res = await fetch('/dl/manifest.json');
+      if (res.ok) {
+        activeManifest = await res.json();
+        updateDownloadUI(currentOs);
+        // Notify other components (Checksums and Footer) with the fetched manifest
+        document.dispatchEvent(new CustomEvent('manifest-loaded', { detail: { manifest: activeManifest } }));
+      } else {
+        document.dispatchEvent(new CustomEvent('manifest-failed'));
+      }
+    } catch (e) {
+      document.dispatchEvent(new CustomEvent('manifest-failed'));
+    }
+  }
+
+  function initHero() {
+    const detected = detectOS();
+    updateDownloadUI(detected);
+    loadManifest();
+
+    document.querySelectorAll<HTMLButtonElement>('.chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetOs = btn.getAttribute('data-target-os') as 'windows' | 'mac_arm64' | 'mac_intel';
+        if (targetOs) {
+          updateDownloadUI(targetOs);
+        }
+      });
+    });
+
+    document.addEventListener('lang-change', () => {
+      updateDownloadUI(currentOs);
+    });
+  }
+
+  initHero();
+</script>
