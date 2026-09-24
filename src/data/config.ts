@@ -1,5 +1,8 @@
-// Replace this placeholder with the production config string:
-export const RUSTDESK_CONFIG_STRING = "=0nI9ElQx10Qod0SRF2bw0GZ3IDb5ZDN2pkMUJnQOJTWXVVc1dHZ1UzcEV3YhBlI6ISeltmIsIiI6ISawFmIsIiI6ISehxWZyJCLiYXZk5yb05WawVmdhRmLlR3btVmciojI0N3boJye";
+// Reversed base64url of {"host":…,"relay":"","api":"","key":…}. A wrong key here
+// fails silently in the client: RustDesk accepts the string and only reports
+// "key mismatch" later, when a connection is attempted. Verify with the decode
+// snippet in README.md after editing.
+export const RUSTDESK_CONFIG_STRING = "=0nI9ElQx10Qod0SRF2bw0GZ3ITS5ZDN2pkMUJnQOJTWXVVc1dHZ1UzcEV3YhBlI6ISeltmIsIiI6ISawFmIsIiI6ISehxWZyJCLiYXZk5yb05WawVmdhRmLlR3btVmciojI0N3boJye";
 
 // Server connection metadata (from ROADMAP.md locked facts)
 export const RUSTDESK_SERVER_HOST = "remote.davepinto.dev";
