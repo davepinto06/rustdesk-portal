@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Página no encontrada — davepinto.dev"
+  description="Esta página no existe. Vuelve a la página de descargas del cliente RustDesk."
+>
+  <section class="notfound">
+    <div class="container notfound-inner">
+      <p class="notfound-code">404</p>
+      <h1 class="notfound-title">
+        <span data-i18n-es>Esta página no existe</span>
+        <span data-i18n-en>This page doesn't exist</span>
+      </h1>
+      <p class="notfound-text">
+        <span data-i18n-es>
+          Puede que el enlace esté mal escrito o que el archivo se haya movido.
+          Los clientes siguen en la página principal.
+        </span>
+        <span data-i18n-en>
+          The link may be mistyped, or whatever was here has moved. The clients
+          are still on the main page.
+        </span>
+      </p>
+      <a href="/" class="notfound-link">
+        <span data-i18n-es>Volver a las descargas</span>
+        <span data-i18n-en>Back to the downloads</span>
+      </a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .notfound {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 4rem 0;
+  }
+
+  .notfound-inner {
+    max-width: 34rem;
+  }
+
+  .notfound-code {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0 0 0.75rem;
+  }
+
+  .notfound-title {
+    font-size: 2rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+  }
+
+  .notfound-text {
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin: 0 0 2rem;
+  }
+
+  .notfound-link {
+    display: inline-block;
+    padding: 0.7rem 1.25rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.5rem;
+    color: var(--text);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .notfound-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>

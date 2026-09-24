@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://remote.davepinto.dev/sitemap.xml
