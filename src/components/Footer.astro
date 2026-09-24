@@ -5,7 +5,7 @@ import { CONTACT_EMAIL, CONTACT_DISPLAY, RUSTDESK_OFFICIAL_URL, UPSTREAM_SOURCE_
 <footer class="site-footer">
   <div class="container footer-inner">
     <div class="footer-left">
-      <!-- Client version badge - only visible when real version is fetched from /dl/manifest.json -->
+      <!-- Client version badge - dynamically shows per-platform versions from /dl/manifest.json -->
       <span class="client-badge hidden" id="footer-client-badge" title="RustDesk Client Version">
         <span data-i18n-es id="footer-version-es"></span>
         <span data-i18n-en id="footer-version-en"></span>
@@ -112,20 +112,55 @@ import { CONTACT_EMAIL, CONTACT_DISPLAY, RUSTDESK_OFFICIAL_URL, UPSTREAM_SOURCE_
 
 <script>
   function updateFooterVersion(manifest: any) {
-    if (manifest?.version) {
+    if (!manifest) return;
+
+    const winVer = manifest.windows?.version;
+    const macVer = manifest.mac_arm64?.version || manifest.mac_intel?.version || manifest.mac?.version;
+    const globalVer = manifest.version;
+
+    let textEs = '';
+    let textEn = '';
+
+    // Per-platform display: prevents claiming 1.5.0 when Windows build is 1.4.9
+    if (winVer && macVer) {
+      if (winVer === macVer) {
+        textEs = `Cliente v${winVer}`;
+        textEn = `Client v${winVer}`;
+      } else {
+        textEs = `Win v${winVer} · Mac v${macVer}`;
+        textEn = `Win v${winVer} · Mac v${macVer}`;
+      }
+    } else if (winVer) {
+      textEs = `Windows v${winVer}`;
+      textEn = `Windows v${winVer}`;
+    } else if (macVer) {
+      textEs = `macOS v${macVer}`;
+      textEn = `macOS v${macVer}`;
+    } else if (globalVer) {
+      textEs = `Cliente v${globalVer}`;
+      textEn = `Client v${globalVer}`;
+    }
+
+    if (textEs && textEn) {
       const badge = document.getElementById('footer-client-badge');
       const sep = document.getElementById('footer-version-sep');
       const esEl = document.getElementById('footer-version-es');
       const enEl = document.getElementById('footer-version-en');
 
-      if (esEl) esEl.textContent = `Cliente v${manifest.version}`;
-      if (enEl) enEl.textContent = `Client v${manifest.version}`;
+      if (esEl) esEl.textContent = textEs;
+      if (enEl) enEl.textContent = textEn;
 
       badge?.classList.remove('hidden');
       sep?.classList.remove('hidden');
     }
   }
 
+  // Check if manifest was already fetched
+  if ((window as any).__MANIFEST__) {
+    updateFooterVersion((window as any).__MANIFEST__);
+  }
+
+  // Listen for manifest-loaded event
   document.addEventListener('manifest-loaded', ((e: CustomEvent) => {
     if (e.detail?.manifest) {
       updateFooterVersion(e.detail.manifest);

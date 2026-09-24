@@ -66,14 +66,17 @@ const FALLBACK_ITEMS = [
             {FALLBACK_ITEMS.map((item) => (
               <tr>
                 <td class="file-name">
-                  <a href={item.url} class="download-table-link" id={`download-link-${item.id}`} download>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                      <polyline points="7 10 12 15 17 10"></polyline>
-                      <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    <span>{item.file}</span>
-                  </a>
+                  <div class="file-name-group">
+                    <a href={item.url} class="download-table-link" id={`download-link-${item.id}`} download>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      <span>{item.file}</span>
+                    </a>
+                    <span class="file-version-tag hidden" id={`file-version-${item.id}`}></span>
+                  </div>
                 </td>
                 <td>
                   <span data-i18n-es>{item.platformEs}</span>
@@ -147,9 +150,11 @@ const FALLBACK_ITEMS = [
     border-bottom: none;
   }
 
-  .file-name {
-    font-weight: 500;
-    color: var(--text);
+  .file-name-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   .download-table-link {
@@ -165,6 +170,17 @@ const FALLBACK_ITEMS = [
   .download-table-link:hover {
     text-decoration: underline;
     color: var(--accent-hover);
+  }
+
+  .file-version-tag {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    padding: 0.0625rem 0.3125rem;
+    border-radius: 4px;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
   }
 
   .hash-code {
@@ -194,9 +210,17 @@ const FALLBACK_ITEMS = [
       const itemData = manifest[id];
       const hashCell = document.getElementById(`hash-val-${id}`);
       const linkEl = document.getElementById(`download-link-${id}`) as HTMLAnchorElement | null;
+      const verEl = document.getElementById(`file-version-${id}`);
 
       if (itemData?.url && linkEl) {
         linkEl.href = itemData.url;
+      }
+
+      // Display per-platform version next to file name if available
+      const platformVersion = itemData?.version || manifest.version;
+      if (platformVersion && verEl) {
+        verEl.textContent = `v${platformVersion}`;
+        verEl.classList.remove('hidden');
       }
 
       if (itemData?.sha256 && typeof itemData.sha256 === 'string' && itemData.sha256.trim() !== '') {
@@ -208,26 +232,32 @@ const FALLBACK_ITEMS = [
     });
 
     if (hasAnyHash) {
-      // Reveal hash column headers and cells
       document.querySelectorAll('.hash-col').forEach(el => {
         el.classList.remove('hidden');
       });
     }
   }
 
-  // 1. Listen for manifest-loaded event
+  // 1. Check if manifest was already fetched
+  if ((window as any).__MANIFEST__) {
+    renderChecksums((window as any).__MANIFEST__);
+  }
+
+  // 2. Listen for manifest-loaded event
   document.addEventListener('manifest-loaded', ((e: CustomEvent) => {
     if (e.detail?.manifest) {
       renderChecksums(e.detail.manifest);
     }
   }) as EventListener);
 
-  // 2. Direct fetch fallback if Hero has not dispatched yet
+  // 3. Fallback direct fetch
   async function fetchManifestDirectly() {
+    if ((window as any).__MANIFEST__) return;
     try {
       const res = await fetch('/dl/manifest.json');
       if (res.ok) {
         const manifest = await res.json();
+        (window as any).__MANIFEST__ = manifest;
         renderChecksums(manifest);
       }
     } catch {

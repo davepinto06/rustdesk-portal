@@ -90,7 +90,7 @@ jobs:
             echo '{"version":"'"$VERSION"'","released":"'$(date +%Y-%m-%d)'","windows":{},"mac_arm64":{},"mac_intel":{}}' > manifest.json
           fi
 
-          # Update only the mac_arm64 and mac_intel sections and release version
+          # Update only the mac_arm64 and mac_intel sections with their own version
           TODAY=$(date +%Y-%m-%d)
           jq \
             --arg ver "$VERSION" \
@@ -100,17 +100,18 @@ jobs:
             --arg intel_sha "$INTEL_SHA" \
             --argjson intel_size "$INTEL_SIZE" \
             '
-            .version = $ver |
             .released = $date |
             .mac_arm64 = {
               "url": "https://dl.davepinto.dev/RustDesk-mac-arm64.dmg",
               "size": $arm_size,
-              "sha256": $arm_sha
+              "sha256": $arm_sha,
+              "version": $ver
             } |
             .mac_intel = {
               "url": "https://dl.davepinto.dev/RustDesk-mac-intel.dmg",
               "size": $intel_size,
-              "sha256": $intel_sha
+              "sha256": $intel_sha,
+              "version": $ver
             }
             ' manifest.json > manifest.tmp && mv manifest.tmp manifest.json
 

@@ -328,6 +328,7 @@ const defaultMacIntelUrl = "/dl/RustDesk-mac-intel.dmg";
       const res = await fetch('/dl/manifest.json');
       if (res.ok) {
         activeManifest = await res.json();
+        (window as any).__MANIFEST__ = activeManifest;
         updateDownloadUI(currentOs);
         // Notify other components (Checksums and Footer) with the fetched manifest
         document.dispatchEvent(new CustomEvent('manifest-loaded', { detail: { manifest: activeManifest } }));

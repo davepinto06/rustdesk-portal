@@ -1,0 +1,211 @@
+name: Mirror macOS Upstream DMGs to R2
+
+# Mirrors the official, notarized RustDesk DMGs into the R2 bucket under stable names
+# and updates manifest.json. Runs daily and on demand.
+#
+# Contract with the download page:
+#   https://dl.davepinto.dev/RustDesk-mac-arm64.dmg
+#   https://dl.davepinto.dev/RustDesk-mac-intel.dmg
+#   https://dl.davepinto.dev/manifest.json
+#
+# manifest.json is the single source of truth for the page. It is written by this job
+# and by the Windows build job — never by hand. Both share a concurrency group so they
+# cannot clobber each other's keys in a read-modify-write race.
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # daily, 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r2-manifest-writers
+  cancel-in-progress: false
+
+jobs:
+  mirror-macos:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+      R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME || 'rustdesk-dl' }}
+      ENDPOINT_URL: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+      BASE_URL: https://dl.davepinto.dev
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check available tooling
+        run: |
+          set -euo pipefail
+          for bin in aws jq curl stat file; do
+            command -v "$bin" >/dev/null || { echo "::error::missing required tool: $bin"; exit 1; }
+          done
+          aws --version
+
+      - name: Read latest upstream release
+        id: upstream
+        run: |
+          set -euo pipefail
+          release=$(curl -fsSL -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/rustdesk/rustdesk/releases/latest)
+          tag=$(jq -r '.tag_name // empty' <<<"$release")
+          version="${tag#v}"
+          published=$(jq -r '.published_at // empty' <<<"$release" | cut -dT -f1)
+          arm_url=$(jq -r '[.assets[] | select(.name | test("(aarch64|arm64).*\\.dmg$")) | .browser_download_url] | .[0] // empty' <<<"$release")
+          intel_url=$(jq -r '[.assets[] | select(.name | test("x86_64.*\\.dmg$")) | .browser_download_url] | .[0] // empty' <<<"$release")
+          if [ -z "$tag" ] || [ -z "$arm_url" ] || [ -z "$intel_url" ]; then
+            echo "::error::could not resolve the upstream tag and both DMG assets"
+            exit 1
+          fi
+          {
+            echo "tag=$tag"
+            echo "version=$version"
+            echo "published=$published"
+            echo "arm_url=$arm_url"
+            echo "intel_url=$intel_url"
+          } >> "$GITHUB_OUTPUT"
+          echo "Upstream release: $tag (version $version), published $published"
+
+      - name: Fetch current manifest from R2
+        id: manifest
+        run: |
+          set -euo pipefail
+          if aws s3 cp "s3://$R2_BUCKET_NAME/manifest.json" manifest.json \
+              --endpoint-url "$ENDPOINT_URL" --only-show-errors 2>/dev/null; then
+            echo "Existing manifest retrieved."
+          else
+            echo "No manifest in R2 yet — creating a baseline."
+            printf '{"version":"","released":"","windows":{},"mac_arm64":{},"mac_intel":{}}\n' > manifest.json
+          fi
+          {
+            echo "arm_version=$(jq -r '.mac_arm64.version // ""' manifest.json)"
+            echo "intel_version=$(jq -r '.mac_intel.version // ""' manifest.json)"
+          } >> "$GITHUB_OUTPUT"
+          cat manifest.json
+
+      - name: Decide whether a mirror is needed
+        id: decide
+        env:
+          VERSION: ${{ steps.upstream.outputs.version }}
+          ARM_VERSION: ${{ steps.manifest.outputs.arm_version }}
+          INTEL_VERSION: ${{ steps.manifest.outputs.intel_version }}
+        run: |
+          set -euo pipefail
+          if [ "$ARM_VERSION" = "$VERSION" ] && [ "$INTEL_VERSION" = "$VERSION" ]; then
+            echo "mirror=no" >> "$GITHUB_OUTPUT"
+            echo "macOS $VERSION is already mirrored — nothing to do."
+          else
+            echo "mirror=yes" >> "$GITHUB_OUTPUT"
+            echo "Mirroring macOS $VERSION (currently $ARM_VERSION / $INTEL_VERSION)."
+          fi
+
+      - name: Download and validate DMGs
+        if: steps.decide.outputs.mirror == 'yes'
+        env:
+          ARM_URL: ${{ steps.upstream.outputs.arm_url }}
+          INTEL_URL: ${{ steps.upstream.outputs.intel_url }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          download() {
+            local url="$1" out="$2" size
+            # -f is essential: without it curl happily saves an error page and exits 0.
+            curl -fsSL --retry 3 --retry-delay 5 -o "$out" "$url"
+            size=$(stat -c%s "$out")
+            # Real DMGs are tens of megabytes; anything small is a failure, not a release.
+            if [ "$size" -lt 10000000 ]; then
+              echo "::error::$out is only $size bytes — refusing to mirror"
+              exit 1
+            fi
+            if head -c 64 "$out" | grep -qiE '<!doctype|<html'; then
+              echo "::error::$out looks like an HTML error page — refusing to mirror"
+              exit 1
+            fi
+            echo "OK: $out ($size bytes)"
+          }
+          download "$ARM_URL" artifacts/RustDesk-mac-arm64.dmg
+          download "$INTEL_URL" artifacts/RustDesk-mac-intel.dmg
+          file artifacts/RustDesk-mac-arm64.dmg artifacts/RustDesk-mac-intel.dmg
+          sha256sum artifacts/RustDesk-mac-arm64.dmg artifacts/RustDesk-mac-intel.dmg
+
+      - name: Upload DMGs to R2
+        if: steps.decide.outputs.mirror == 'yes'
+        run: |
+          set -euo pipefail
+          for f in RustDesk-mac-arm64.dmg RustDesk-mac-intel.dmg; do
+            aws s3 cp "artifacts/$f" "s3://$R2_BUCKET_NAME/$f" \
+              --endpoint-url "$ENDPOINT_URL" \
+              --only-show-errors \
+              --content-type application/x-apple-diskimage \
+              --cache-control "public, max-age=600, must-revalidate"
+          done
+
+      - name: Update manifest.json in R2
+        if: steps.decide.outputs.mirror == 'yes'
+        env:
+          VERSION: ${{ steps.upstream.outputs.version }}
+          TAG: ${{ steps.upstream.outputs.tag }}
+          PUBLISHED: ${{ steps.upstream.outputs.published }}
+        run: |
+          set -euo pipefail
+          arm_size=$(stat -c%s artifacts/RustDesk-mac-arm64.dmg)
+          arm_sha=$(sha256sum artifacts/RustDesk-mac-arm64.dmg | cut -d' ' -f1)
+          intel_size=$(stat -c%s artifacts/RustDesk-mac-intel.dmg)
+          intel_sha=$(sha256sum artifacts/RustDesk-mac-intel.dmg | cut -d' ' -f1)
+
+          jq \
+            --arg ver "$VERSION" \
+            --arg tag "$TAG" \
+            --arg date "$PUBLISHED" \
+            --arg base "$BASE_URL" \
+            --arg arm_sha "$arm_sha" \
+            --argjson arm_size "$arm_size" \
+            --arg intel_sha "$intel_sha" \
+            --argjson intel_size "$intel_size" \
+            '
+            .version = $ver
+            | .released = $date
+            | .mac_arm64 = {
+                url: ($base + "/RustDesk-mac-arm64.dmg"),
+                size: $arm_size,
+                sha256: $arm_sha,
+                version: $ver,
+                upstream_tag: $tag,
+                source_url: ("https://github.com/rustdesk/rustdesk/tree/" + $tag)
+              }
+            | .mac_intel = {
+                url: ($base + "/RustDesk-mac-intel.dmg"),
+                size: $intel_size,
+                sha256: $intel_sha,
+                version: $ver,
+                upstream_tag: $tag,
+                source_url: ("https://github.com/rustdesk/rustdesk/tree/" + $tag)
+              }
+            ' manifest.json > manifest.tmp
+          mv manifest.tmp manifest.json
+          cat manifest.json
+
+          aws s3 cp manifest.json "s3://$R2_BUCKET_NAME/manifest.json" \
+            --endpoint-url "$ENDPOINT_URL" \
+            --only-show-errors \
+            --content-type application/json \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+      - name: Summary
+        run: |
+          {
+            echo "### macOS mirror"
+            echo ""
+            if [ "${{ steps.decide.outputs.mirror }}" = "yes" ]; then
+              echo "- Mirrored upstream ${{ steps.upstream.outputs.tag }}"
+            else
+              echo "- Upstream ${{ steps.upstream.outputs.tag }} was already mirrored"
+            fi
+            echo "- $BASE_URL/RustDesk-mac-arm64.dmg"
+            echo "- $BASE_URL/RustDesk-mac-intel.dmg"
+            echo "- $BASE_URL/manifest.json"
+          } >> "$GITHUB_STEP_SUMMARY"
