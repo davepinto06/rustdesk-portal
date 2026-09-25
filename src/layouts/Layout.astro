@@ -51,6 +51,37 @@ const {
             media="(prefers-color-scheme: dark)"
         />
 
+        <!-- Platform detection, also before paint. Hero and OsGuidance read data-os instead of
+             each sniffing the user agent, so they can never disagree or miss each other's events.
+             Values: windows | mac_arm64 | ios | android | other. Hero may refine mac_arm64 to
+             mac_intel later, where the browser exposes the CPU architecture. -->
+        <script is:inline>
+            (function () {
+                var os = "other";
+                try {
+                    var ua = navigator.userAgent || "";
+                    var uad = navigator.userAgentData;
+                    var plat = (uad && uad.platform) || navigator.platform || "";
+                    if (/android/i.test(ua)) {
+                        os = "android";
+                    } else if (
+                        /iphone|ipad|ipod/i.test(ua) ||
+                        // iPadOS reports itself as a Mac; a Mac has no touch points.
+                        (/mac/i.test(plat + ua) && navigator.maxTouchPoints > 1)
+                    ) {
+                        os = "ios";
+                    } else if (/win/i.test(plat) || /windows/i.test(ua)) {
+                        os = "windows";
+                    } else if (/mac/i.test(plat) || /macintosh/i.test(ua)) {
+                        os = "mac_arm64";
+                    }
+                } catch (e) {
+                    // keep "other"
+                }
+                document.documentElement.setAttribute("data-os", os);
+            })();
+        </script>
+
         <!-- Inline script to set theme & language BEFORE paint to prevent FOUC / layout shift -->
         <script is:inline>
             (function () {

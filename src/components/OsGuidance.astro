@@ -49,12 +49,12 @@ import { RUSTDESK_CONFIG_STRING } from '../data/config';
             <div class="step-number">1</div>
             <div class="step-content">
               <h3 class="step-title">
-                <span data-i18n-es>Abre el instalador descargado</span>
-                <span data-i18n-en>Run the downloaded installer</span>
+                <span data-i18n-es>Abre el archivo descargado</span>
+                <span data-i18n-en>Open the downloaded file</span>
               </h3>
               <p class="step-desc">
-                <span data-i18n-es>Ejecuta <code>RustDesk-win64.exe</code> desde tu carpeta de descargas.</span>
-                <span data-i18n-en>Open <code>RustDesk-win64.exe</code> from your downloads folder.</span>
+                <span data-i18n-es>Ejecuta <code>RustDesk-win64.exe</code> desde tu carpeta de descargas. No instala nada: RustDesk se abre directamente.</span>
+                <span data-i18n-en>Run <code>RustDesk-win64.exe</code> from your downloads folder. Nothing gets installed: RustDesk opens straight away.</span>
               </p>
             </div>
           </div>
@@ -91,10 +91,10 @@ import { RUSTDESK_CONFIG_STRING } from '../data/config';
               </h3>
               <p class="step-desc">
                 <span data-i18n-es>
-                  La dirección del servidor personal y la clave de cifrado ya vienen integradas en la aplicación. Tu ID y contraseña temporal aparecerán de inmediato. Comparte tu ID para comenzar la sesión de soporte.
+                  La dirección del servidor personal y la clave de cifrado ya vienen integradas en la aplicación. Tu ID y contraseña temporal aparecerán de inmediato. Comparte tu ID para comenzar la sesión de soporte. Al terminar, cierra RustDesk; puedes borrar el archivo y descargarlo de nuevo la próxima vez.
                 </span>
                 <span data-i18n-en>
-                  The personal server address and encryption key are already baked in. Your ID and one-time password will appear immediately. Share your ID to start the support session.
+                  The personal server address and encryption key are already baked in. Your ID and one-time password will appear immediately. Share your ID to start the support session. When you're done, close RustDesk; you can delete the file and download it again next time.
                 </span>
               </p>
             </div>
@@ -189,8 +189,8 @@ import { RUSTDESK_CONFIG_STRING } from '../data/config';
                 <span data-i18n-en>Apply the connection config</span>
               </h3>
               <p class="step-desc">
-                <span data-i18n-es>Copia esta cadena de configuración y pégala en RustDesk en <em>Ajustes → Red → Desbloquear ajustes de red → Cadena de configuración</em>:</span>
-                <span data-i18n-en>Copy this configuration string and paste it into RustDesk under <em>Settings → Network → Unlock Network Settings → Configuration String</em>:</span>
+                <span data-i18n-es>Copia esta cadena de configuración:</span>
+                <span data-i18n-en>Copy this configuration string:</span>
               </p>
 
               <!-- Config String Block (Horizontal scrolling with no layout resizing) -->
@@ -198,10 +198,10 @@ import { RUSTDESK_CONFIG_STRING } from '../data/config';
                 <div class="code-header">
                   <span class="code-title">
                     <span data-i18n-es>Cadena de configuración</span>
-                    <span data-i18n-en>Configuration String</span>
+                    <span data-i18n-en>Configuration string</span>
                   </span>
                   <button type="button" class="copy-btn" id="copy-config-btn" data-copy={RUSTDESK_CONFIG_STRING}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                       <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
                       <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
                     </svg>
@@ -212,32 +212,25 @@ import { RUSTDESK_CONFIG_STRING } from '../data/config';
                 <pre class="code-content"><code>{RUSTDESK_CONFIG_STRING}</code></pre>
               </div>
 
-              <!-- Terminal One-liner -->
-              <div class="terminal-note">
-                <p class="step-desc-subtle">
-                  <span data-i18n-es>O ejecuta este comando en la Terminal:</span>
-                  <span data-i18n-en>Or run this one-liner in Terminal:</span>
-                </p>
-                <div class="code-block-container">
-                  <div class="code-header">
-                    <span class="code-title">Terminal</span>
-                    <button
-                      type="button"
-                      class="copy-btn"
-                      id="copy-terminal-btn"
-                      data-copy={`/Applications/RustDesk.app/Contents/MacOS/RustDesk --config '${RUSTDESK_CONFIG_STRING}'`}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                      </svg>
-                      <span class="copy-text" data-i18n-es>Copiar comando</span>
-                      <span class="copy-text" data-i18n-en>Copy command</span>
-                    </button>
-                  </div>
-                  <pre class="code-content"><code>/Applications/RustDesk.app/Contents/MacOS/RustDesk --config '{RUSTDESK_CONFIG_STRING}'</code></pre>
-                </div>
-              </div>
+              <!-- Labels match the RustDesk 1.4 desktop UI in each language. -->
+              <ol class="import-steps">
+                <li>
+                  <span data-i18n-es>En RustDesk, abre <strong>Ajustes → Red</strong>.</span>
+                  <span data-i18n-en>In RustDesk, open <strong>Settings → Network</strong>.</span>
+                </li>
+                <li>
+                  <span data-i18n-es>Pulsa <strong>Desbloquear Ajustes de Red</strong> e introduce la contraseña de tu Mac.</span>
+                  <span data-i18n-en>Click <strong>Unlock network settings</strong> and enter your Mac password.</span>
+                </li>
+                <li>
+                  <span data-i18n-es>Abre <strong>Servidor ID/Relay</strong>.</span>
+                  <span data-i18n-en>Open <strong>ID/Relay server</strong>.</span>
+                </li>
+                <li>
+                  <span data-i18n-es>Pulsa el icono de pegar (<em>Importar configuración de servidor</em>): los campos se rellenan solos. Luego pulsa <strong>Aceptar</strong>.</span>
+                  <span data-i18n-en>Click the paste icon (<em>Import server config</em>): the fields fill in by themselves. Then click <strong>OK</strong>.</span>
+                </li>
+              </ol>
             </div>
           </div>
         </div>
@@ -431,13 +424,6 @@ import { RUSTDESK_CONFIG_STRING } from '../data/config';
     border: 1px solid var(--border);
   }
 
-  .step-desc-subtle {
-    font-size: 0.8125rem;
-    color: var(--text-muted);
-    margin-top: 1rem;
-    margin-bottom: 0.375rem;
-  }
-
   .callout {
     display: flex;
     align-items: center;
@@ -456,9 +442,18 @@ import { RUSTDESK_CONFIG_STRING } from '../data/config';
     font-weight: 700;
   }
 
-  .terminal-note {
-    min-width: 0;
-    max-width: 100%;
+  .import-steps {
+    margin: 0.875rem 0 0 1.125rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .import-steps strong {
+    color: var(--text);
   }
 
   /* Code block container with strictly bounded width and horizontal scrolling */
@@ -755,6 +750,11 @@ import { RUSTDESK_CONFIG_STRING } from '../data/config';
 
       selectTab(target, true);
     }) as EventListener);
+
+    const initialOs = document.documentElement.dataset.selectedOs || document.documentElement.dataset.os;
+    if (initialOs === 'mac_arm64' || initialOs === 'mac_intel' || initialOs === 'ios') {
+      selectTab('mac');
+    }
 
     document.addEventListener('os-change', ((e: CustomEvent) => {
       const os = e.detail?.os;

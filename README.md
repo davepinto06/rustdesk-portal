@@ -23,6 +23,20 @@ The manifest is written by CI — never edit it by hand. If it cannot be fetched
 (running locally, for instance) the page falls back to plain `/dl/...` links and
 hides the checksum column rather than showing values it cannot vouch for.
 
+## Deploying
+
+The site is served by the production Caddy container from `~/docker/rustdesk/site/dist`
+(bind-mounted read-only at `/srv/site`). Publish from a clean, committed checkout:
+
+```sh
+pnpm deploy                   # check config, build, back up the live copy, publish
+bash scripts/deploy.sh --rollback   # republish the most recent backup
+```
+
+No Caddy reload is needed. The script updates files in place in a safe order (new hashed
+assets first, then atomic replacement of everything else) and keeps the last five backups in
+`~/.local/state/rustdesk-portal/backups/`.
+
 ## Editing notes
 
 - **Text is bilingual.** Every user-visible string appears twice, tagged
@@ -38,15 +52,14 @@ hides the checksum column rather than showing values it cannot vouch for.
   RustDesk once. It is a reversed, base64url-encoded JSON object containing the
   server host and its public key. A wrong value fails silently in the client —
   it accepts the string and only errors later, when connecting — so decode it
-  after editing and check the key against the server:
-
-  ```sh
-  python3 - <<'EOF'
-  import base64, json, re, pathlib
-  s = re.search(r'"(=.*?)"', pathlib.Path('src/data/config.ts').read_text()).group(1)
-  print(json.loads(base64.urlsafe_b64decode(s[::-1] + '=')))
-  EOF
-  ```
+  after editing: `pnpm check:config` checks it against `RUSTDESK_SERVER_HOST` and
+  `RUSTDESK_SERVER_PUBKEY` (the deploy script runs it too).
+- **macOS import steps** on the page name the RustDesk 1.4 menu items in each language
+  (Ajustes → Red → Desbloquear Ajustes de Red → Servidor ID/Relay → paste icon). Re-check
+  them against the client when RustDesk's settings UI changes. There is deliberately no
+  `--config` Terminal command: RustDesk only honours it when run as root.
+- **Platform detection** runs in an inline script in `Layout.astro` before first paint and
+  sets `data-os` on `<html>`; components read that instead of sniffing the user agent.
 
 - **Windows downloads are portable.** The published `.exe` unpacks itself and
   runs without installing anything, so the guidance on the page assumes the user

@@ -1,5 +1,5 @@
 ---
-import { CONTACT_EMAIL, CONTACT_DISPLAY, RUSTDESK_OFFICIAL_URL, UPSTREAM_SOURCE_URL } from '../data/config';
+import { CONTACT_EMAIL, CONTACT_DISPLAY, RUSTDESK_OFFICIAL_URL, UPSTREAM_SOURCE_URL, FORK_PATCH_URL } from '../data/config';
 ---
 
 <footer class="site-footer">
@@ -16,12 +16,24 @@ import { CONTACT_EMAIL, CONTACT_DISPLAY, RUSTDESK_OFFICIAL_URL, UPSTREAM_SOURCE_
       <span class="separator">·</span>
       <a
         href={UPSTREAM_SOURCE_URL}
+        id="footer-source-link"
         target="_blank"
         rel="noopener noreferrer"
         class="footer-link"
       >
         <span data-i18n-es>Código fuente (AGPLv3)</span>
         <span data-i18n-en>Source (AGPLv3)</span>
+      </a>
+      <span class="separator">·</span>
+      <a
+        href={FORK_PATCH_URL}
+        id="footer-patch-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="footer-link"
+      >
+        <span data-i18n-es>Cambios del cliente de Windows</span>
+        <span data-i18n-en>Windows client changes</span>
       </a>
       <span class="separator">·</span>
       <a
@@ -155,15 +167,27 @@ import { CONTACT_EMAIL, CONTACT_DISPLAY, RUSTDESK_OFFICIAL_URL, UPSTREAM_SOURCE_
     }
   }
 
+  // Point the AGPL links at exactly what the published Windows build was made from.
+  function updateSourceLinks(manifest: any) {
+    const win = manifest?.windows;
+    const isGithub = (u: unknown): u is string => typeof u === 'string' && u.startsWith('https://github.com/');
+    const src = document.getElementById('footer-source-link') as HTMLAnchorElement | null;
+    const patch = document.getElementById('footer-patch-link') as HTMLAnchorElement | null;
+    if (src && isGithub(win?.source_url)) src.href = win.source_url;
+    if (patch && isGithub(win?.patch_url)) patch.href = win.patch_url;
+  }
+
   // Check if manifest was already fetched
   if ((window as any).__MANIFEST__) {
     updateFooterVersion((window as any).__MANIFEST__);
+    updateSourceLinks((window as any).__MANIFEST__);
   }
 
   // Listen for manifest-loaded event
   document.addEventListener('manifest-loaded', ((e: CustomEvent) => {
     if (e.detail?.manifest) {
       updateFooterVersion(e.detail.manifest);
+      updateSourceLinks(e.detail.manifest);
     }
   }) as EventListener);
 </script>
