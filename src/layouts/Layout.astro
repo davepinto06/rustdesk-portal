@@ -54,12 +54,10 @@ const {
         <!-- Platform detection, also before paint. Hero and OsGuidance read data-os instead of
              each sniffing the user agent, so they can never disagree or miss each other's events.
              Values: windows | mac_arm64 | ios | android | other. Hero may refine mac_arm64 to
-             mac_intel later, where the browser exposes the CPU architecture. "other" is only for
-             a positively identified Linux/ChromeOS desktop; anything unrecognised gets the
-             Windows download rather than a page with no download button. -->
+             mac_intel later, where the browser exposes the CPU architecture. -->
         <script is:inline>
             (function () {
-                var os = "windows";
+                var os = "other";
                 try {
                     var ua = navigator.userAgent || "";
                     var uad = navigator.userAgentData;
@@ -76,11 +74,9 @@ const {
                         os = "windows";
                     } else if (/mac/i.test(plat) || /macintosh/i.test(ua)) {
                         os = "mac_arm64";
-                    } else if (/linux|x11|cros/i.test(plat + " " + ua)) {
-                        os = "other";
                     }
                 } catch (e) {
-                    // keep "windows"
+                    // keep "other"
                 }
                 document.documentElement.setAttribute("data-os", os);
             })();
