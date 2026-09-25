@@ -419,7 +419,7 @@ const defaultWindowsUrl = "/dl/RustDesk-win64.exe";
   }
 
   function initHero() {
-    const platform = document.documentElement.dataset.os || 'other';
+    const platform = document.documentElement.dataset.os || 'windows';
 
     if (platform === 'windows' || platform === 'mac_arm64') {
       current = platform;
