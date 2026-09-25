@@ -23,6 +23,12 @@ KEEP_ASSET_DAYS="${KEEP_ASSET_DAYS:-7}"
 
 die() { echo "deploy: $*" >&2; exit 1; }
 
+case "${1:-}" in
+  "" | --rollback) ;;
+  -h | --help) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+  *) die "unknown argument '$1' (use --rollback or --help)" ;;
+esac
+
 [ -d "$DEPLOY_DIR" ] || die "$DEPLOY_DIR does not exist"
 
 backup() {
