@@ -15,3 +15,6 @@ export const CONTACT_DISPLAY = "davepinto.dev";
 // Upstream & AGPL links
 export const RUSTDESK_OFFICIAL_URL = "https://rustdesk.com";
 export const UPSTREAM_SOURCE_URL = "https://github.com/rustdesk/rustdesk";
+// The Windows client is upstream plus this patch (server address, key, update check).
+// The footer swaps in the exact commit links from manifest.json when it loads.
+export const FORK_PATCH_URL = "https://github.com/davepinto06/rustdesk/tree/master/.github/custom";
