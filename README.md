@@ -29,7 +29,7 @@ The site is served by the production Caddy container from `~/docker/rustdesk/sit
 (bind-mounted read-only at `/srv/site`). Publish from a clean, committed checkout:
 
 ```sh
-pnpm deploy                   # check config, build, back up the live copy, publish
+pnpm release                  # check config, build, back up the live copy, publish
 bash scripts/deploy.sh --rollback   # republish the most recent backup
 ```
 
